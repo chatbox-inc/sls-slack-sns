@@ -1,1 +1,7 @@
-{}
+{
+  "Records":[
+    {"Sns":{
+      "Message": "{\"text\":\"hogehoge\",\"channel\":\"#ci\"}"
+    }}
+  ]
+}

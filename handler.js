@@ -17,7 +17,11 @@ const slack = (channel,text,attachments)=>{
             .post(slackUrl)
             .send(query)
             .end(function(err, res){
-                resolve(res) // must resolve
+                if(res){
+                    resolve(res) // must resolve
+                }else{
+                    throw err;
+                }
             })
     })
 }
@@ -37,17 +41,21 @@ module.exports.slack = function(event, context, cb) {
                 pList.push(slack(channel,text,attachments))
             }
         });
-        Promise.all(pList).then((resList)=>{
-            resList.forEach((res)=>{
-                if(res.error){
-                    console.log(res.req)
-                    console.error("Message failed",res.error)
-                }
+        if(pList.length){
+            Promise.all(pList).then((resList)=>{
+                resList.forEach((res)=>{
+                    if(res.error){
+                        console.log(res.request._data)
+                        console.error("Message failed",res.error)
+                    }
+                })
+                cb(null,{message: 'posted to slack'})
+            }).catch((err)=>{
+                cb(err)
             })
-            cb(null,{message: 'posted to slack'})
-        }).catch((err)=>{
-            cb(err)
-        })
+        }else{
+            throw new Error("no Sns Message Recieved")
+        }
     } else {
         cb(new Error('No SNS records found'));
     }
