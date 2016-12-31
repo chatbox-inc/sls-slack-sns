@@ -40,6 +40,7 @@ module.exports.slack = function(event, context, cb) {
         Promise.all(pList).then((resList)=>{
             resList.forEach((res)=>{
                 if(res.error){
+                    console.log(res.req)
                     console.error("Message failed",res.error)
                 }
             })
